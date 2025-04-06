@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exchange Rates</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+    .rate {
+      font-size: 1.6rem;
+      margin: 0.5rem 0;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      width: fit-content;
+      min-width: 250px;
+      text-align: center;
+    }
+    #eur-gbp { background-color: #1e1e2f; color: #a0c4ff; }
+    #eur-cny { background-color: #1e2f2f; color: #b5f4e8; }
+    #eur-usd { background-color: #2f1e2f; color: #f4b5d4; }
+  </style>
+</head>
+<body>
+  <h1>Live Exchange Rates</h1>
+  <div class="rate" id="eur-gbp">EUR → GBP: loading...</div>
+  <div class="rate" id="eur-cny">EUR → CNY: loading...</div>
+  <div class="rate" id="eur-usd">EUR → USD: loading...</div>
+
+  <script>
+    async function fetchRates() {
+      const url = "https://api.exchangerate.host/live?access_key=39616e7c58ceec8f4423c509a13dba1c&currencies=GBP,CNY,EUR";
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const usdToEur = data.quotes.USDEUR;
+        const usdToGbp = data.quotes.USDGBP;
+        const usdToCny = data.quotes.USDCNY;
+
+        const eurToUsd = 1 / usdToEur;
+        const eurToGbp = usdToGbp / usdToEur;
+        const eurToCny = usdToCny / usdToEur;
+
+        document.getElementById("eur-gbp").textContent = `1 EUR = ${eurToGbp.toFixed(4)} GBP`;
+        document.getElementById("eur-cny").textContent = `1 EUR = ${eurToCny.toFixed(4)} CNY`;
+        document.getElementById("eur-usd").textContent = `1 EUR = ${eurToUsd.toFixed(4)} USD`;
+      } catch (err) {
+        document.getElementById("eur-gbp").textContent = "EUR → GBP: failed to load";
+        document.getElementById("eur-cny").textContent = "EUR → CNY: failed to load";
+        document.getElementById("eur-usd").textContent = "EUR → USD: failed to load";
+      }
+    }
+
+    fetchRates();
+  </script>
+</body>
+</html>
