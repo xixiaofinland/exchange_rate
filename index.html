@@ -31,38 +31,39 @@
     #eur-gbp { background-color: #1e1e2f; color: #a0c4ff; }
     #eur-cny { background-color: #1e2f2f; color: #b5f4e8; }
     #eur-usd { background-color: #2f1e2f; color: #f4b5d4; }
+    #usd-cny { background-color: #2f2f1e; color: #f4f4b5; }
   </style>
 </head>
 <body>
+  <h1>Currency Exchange Rates</h1>
   <div class="rate" id="eur-gbp">EUR → GBP: loading...</div>
   <div class="rate" id="eur-cny">EUR → CNY: loading...</div>
   <div class="rate" id="eur-usd">EUR → USD: loading...</div>
-
+  <div class="rate" id="usd-cny">USD → CNY: loading...</div>
   <script>
     async function fetchRates() {
       const url = "https://api.exchangerate.host/live?access_key=39616e7c58ceec8f4423c509a13dba1c&currencies=GBP,CNY,EUR";
       try {
         const res = await fetch(url);
         const data = await res.json();
-
         const usdToEur = data.quotes.USDEUR;
         const usdToGbp = data.quotes.USDGBP;
         const usdToCny = data.quotes.USDCNY;
-
         const eurToUsd = 1 / usdToEur;
         const eurToGbp = usdToGbp / usdToEur;
         const eurToCny = usdToCny / usdToEur;
-
+        
         document.getElementById("eur-gbp").textContent = `1 EUR = ${eurToGbp.toFixed(4)} GBP`;
         document.getElementById("eur-cny").textContent = `1 EUR = ${eurToCny.toFixed(4)} CNY`;
         document.getElementById("eur-usd").textContent = `1 EUR = ${eurToUsd.toFixed(4)} USD`;
+        document.getElementById("usd-cny").textContent = `1 USD = ${usdToCny.toFixed(4)} CNY`;
       } catch (err) {
         document.getElementById("eur-gbp").textContent = "EUR → GBP: failed to load";
         document.getElementById("eur-cny").textContent = "EUR → CNY: failed to load";
         document.getElementById("eur-usd").textContent = "EUR → USD: failed to load";
+        document.getElementById("usd-cny").textContent = "USD → CNY: failed to load";
       }
     }
-
     fetchRates();
   </script>
 </body>
